@@ -1,0 +1,27 @@
+{
+  "name": "Customer",
+  "type": "object",
+  "title": "Customer",
+  "description": "A merchant's end customer, tracked for repeat-disputer risk signals.",
+  "properties": {
+    "merchant_id": { "type": "string", "description": "Merchant.id this customer belongs to" },
+    "name": { "type": "string", "maxLength": 200 },
+    "email": { "type": "string", "format": "email" },
+    "stripe_customer_id": { "type": "string" },
+    "total_orders": { "type": "integer", "minimum": 0, "default": 0 },
+    "total_disputes": { "type": "integer", "minimum": 0, "default": 0 },
+    "disputes_lost_by_merchant": { "type": "integer", "minimum": 0, "default": 0 },
+    "risk_flag": {
+      "type": "string",
+      "enum": ["low", "medium", "high"],
+      "default": "low"
+    }
+  },
+  "required": ["merchant_id", "email"],
+  "rls": {
+    "create": true,
+    "read": { "created_by": "{{user.email}}" },
+    "update": { "created_by": "{{user.email}}" },
+    "delete": { "created_by": "{{user.email}}" }
+  }
+}

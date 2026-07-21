@@ -1,0 +1,23 @@
+{
+  "name": "Merchant",
+  "type": "object",
+  "title": "Merchant",
+  "description": "Per-account settings for a merchant using ChargebackShield.",
+  "properties": {
+    "business_name": { "type": "string", "minLength": 1, "maxLength": 200 },
+    "notification_email": { "type": "string", "format": "email" },
+    "reply_to_email": { "type": "string", "format": "email" },
+    "stripe_account_connected": { "type": "boolean", "default": false },
+    "auto_draft_enabled": { "type": "boolean", "default": true },
+    "require_approval_before_submit": { "type": "boolean", "default": true },
+    "risk_alert_threshold": { "type": "number", "minimum": 0, "maximum": 100, "default": 60 },
+    "reminder_cadence_hours": { "type": "integer", "minimum": 1, "default": 24 }
+  },
+  "required": ["business_name", "notification_email"],
+  "rls": {
+    "create": true,
+    "read": { "created_by": "{{user.email}}" },
+    "update": { "created_by": "{{user.email}}" },
+    "delete": { "created_by": "{{user.email}}" }
+  }
+}

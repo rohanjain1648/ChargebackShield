@@ -1,0 +1,56 @@
+{
+  "name": "Dispute",
+  "type": "object",
+  "title": "Dispute",
+  "description": "A Stripe chargeback/dispute and its response deadline + lifecycle state.",
+  "properties": {
+    "merchant_id": { "type": "string" },
+    "order_id": { "type": "string" },
+    "customer_id": { "type": "string" },
+    "stripe_dispute_id": { "type": "string" },
+    "reason": {
+      "type": "string",
+      "enum": [
+        "duplicate",
+        "fraudulent",
+        "subscription_canceled",
+        "product_unacceptable",
+        "product_not_received",
+        "unrecognized",
+        "credit_not_processed",
+        "general",
+        "incorrect_account_details",
+        "insufficient_funds",
+        "bank_cannot_process",
+        "debit_not_authorized",
+        "customer_initiated"
+      ]
+    },
+    "amount": { "type": "number", "minimum": 0 },
+    "currency": { "type": "string", "default": "usd" },
+    "status": {
+      "type": "string",
+      "enum": ["needs_response", "evidence_drafted", "under_review", "won", "lost", "warning_closed"],
+      "default": "needs_response"
+    },
+    "evidence_due_by": { "type": "string", "format": "date-time" },
+    "stripe_created_at": { "type": "string", "format": "date-time" },
+    "network_reason_code": { "type": "string" },
+    "is_refundable": { "type": "boolean", "default": false },
+    "last_reminder_sent_at": { "type": "string", "format": "date-time" },
+    "reminders_sent_count": { "type": "integer", "minimum": 0, "default": 0 },
+    "outcome": {
+      "type": "string",
+      "enum": ["pending", "won", "lost"],
+      "default": "pending"
+    },
+    "is_simulated": { "type": "boolean", "default": false }
+  },
+  "required": ["merchant_id", "stripe_dispute_id", "reason", "amount", "evidence_due_by"],
+  "rls": {
+    "create": true,
+    "read": { "created_by": "{{user.email}}" },
+    "update": { "created_by": "{{user.email}}" },
+    "delete": { "created_by": "{{user.email}}" }
+  }
+}

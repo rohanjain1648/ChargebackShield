@@ -1,0 +1,49 @@
+{
+  "name": "EvidencePacket",
+  "type": "object",
+  "title": "Evidence Packet",
+  "description": "Assembled evidence + AI-drafted rebuttal for a single dispute, gated behind merchant approval before submission to Stripe.",
+  "properties": {
+    "merchant_id": { "type": "string" },
+    "dispute_id": { "type": "string" },
+    "assembled_fields": {
+      "type": "object",
+      "description": "Map of Stripe evidence fields to the values assembled from Order/Customer records",
+      "properties": {
+        "product_description": { "type": "string" },
+        "shipping_documentation": { "type": "string" },
+        "shipping_carrier": { "type": "string" },
+        "shipping_tracking_number": { "type": "string" },
+        "shipping_date": { "type": "string" },
+        "receipt": { "type": "string" },
+        "customer_communication": { "type": "string" },
+        "refund_policy": { "type": "string" },
+        "uncategorized_text": { "type": "string" }
+      }
+    },
+    "missing_fields": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Evidence fields the strategy needs but no data was found for"
+    },
+    "ai_strategy_summary": { "type": "string", "maxLength": 2000 },
+    "ai_draft_text": { "type": "string", "maxLength": 4000 },
+    "ai_confidence": { "type": "number", "minimum": 0, "maximum": 1 },
+    "status": {
+      "type": "string",
+      "enum": ["assembling", "drafted", "approved", "submitted", "submit_failed"],
+      "default": "assembling"
+    },
+    "approved_by": { "type": "string" },
+    "approved_at": { "type": "string", "format": "date-time" },
+    "submitted_at": { "type": "string", "format": "date-time" },
+    "stripe_submission_status": { "type": "string" }
+  },
+  "required": ["merchant_id", "dispute_id"],
+  "rls": {
+    "create": true,
+    "read": { "created_by": "{{user.email}}" },
+    "update": { "created_by": "{{user.email}}" },
+    "delete": { "created_by": "{{user.email}}" }
+  }
+}

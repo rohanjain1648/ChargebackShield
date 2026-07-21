@@ -1,0 +1,32 @@
+{
+  "name": "ActivityEvent",
+  "type": "object",
+  "title": "Activity Event",
+  "description": "Visible audit timeline entry for a dispute or merchant account, shown live in the UI during a demo.",
+  "properties": {
+    "merchant_id": { "type": "string" },
+    "dispute_id": { "type": "string" },
+    "event_type": {
+      "type": "string",
+      "enum": [
+        "dispute_ingested",
+        "evidence_assembled",
+        "draft_generated",
+        "reminder_sent",
+        "evidence_approved",
+        "evidence_submitted",
+        "outcome_recorded",
+        "risk_flagged"
+      ]
+    },
+    "message": { "type": "string", "maxLength": 500 },
+    "metadata": { "type": "object" }
+  },
+  "required": ["merchant_id", "event_type", "message"],
+  "rls": {
+    "create": true,
+    "read": { "created_by": "{{user.email}}" },
+    "update": { "created_by": "{{user.email}}" },
+    "delete": { "created_by": "{{user.email}}" }
+  }
+}

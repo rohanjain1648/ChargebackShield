@@ -1,0 +1,25 @@
+{
+  "name": "RiskSignal",
+  "type": "object",
+  "title": "Risk Signal",
+  "description": "A pre-dispute risk flag raised by the risk scorer, so merchants can act before a chargeback happens.",
+  "properties": {
+    "merchant_id": { "type": "string" },
+    "order_id": { "type": "string" },
+    "customer_id": { "type": "string" },
+    "signal_type": {
+      "type": "string",
+      "enum": ["repeat_disputer", "high_risk_order", "velocity_spike", "no_delivery_confirmation"]
+    },
+    "score": { "type": "number", "minimum": 0, "maximum": 100 },
+    "details": { "type": "string", "maxLength": 1000 },
+    "acknowledged": { "type": "boolean", "default": false }
+  },
+  "required": ["merchant_id", "signal_type", "score"],
+  "rls": {
+    "create": true,
+    "read": { "created_by": "{{user.email}}" },
+    "update": { "created_by": "{{user.email}}" },
+    "delete": { "created_by": "{{user.email}}" }
+  }
+}
