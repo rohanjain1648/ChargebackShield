@@ -1,0 +1,6 @@
+{
+  "name": "chargebackshield",
+  "site": {
+    "outputDirectory": "./dist"
+  }
+}

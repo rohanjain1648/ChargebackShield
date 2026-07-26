@@ -20,7 +20,7 @@ ChargebackShield closes that gap with backend automation, not a better inbox.
 Stripe dispute created ──▶ stripeWebhook (verifies signature)
                                 │
                                 ▼
-                         processNewDispute (_shared/dispute.ts)
+                         processNewDispute (shared/dispute.ts)
                                 │
                     ┌───────────┼────────────┐
                     ▼           ▼            ▼
@@ -56,7 +56,7 @@ is fully automatic.
 account. That keeps row-level security simple (every record's `created_by` is the one owner) and
 lets the Stripe webhook — which arrives with no authenticated Base44 user — resolve "whose data is
 this" from a `MERCHANT_OWNER_EMAIL` secret instead of a multi-tenant lookup. See the comment block at
-the top of `base44/functions/_shared/dispute.ts`. Multi-tenant is a natural v2: resolve the owning
+the top of `base44/shared/dispute.ts`. Multi-tenant is a natural v2: resolve the owning
 merchant from the Stripe Connect account on the incoming event instead.
 
 ## What's in this repo
@@ -71,7 +71,7 @@ merchant from the Stripe Connect account on the incoming event instead.
 | `base44/functions/scoreRisk/` | Pre-dispute risk scoring for a given order |
 | `base44/functions/deadlineSweep/` | Scheduled job: escalating deadline reminder emails |
 | `base44/functions/simulateDispute/` | Fires a synthetic dispute through the real pipeline, for demos |
-| `base44/functions/_shared/dispute.ts` | Shared pipeline logic + per-reason-code evidence strategy |
+| `base44/shared/dispute.ts` | Shared pipeline logic + per-reason-code evidence strategy |
 | `src/` | React (Vite) frontend: dispute queue, dispute workbench, dashboard, settings |
 
 ## Setup
@@ -87,8 +87,7 @@ merchant from the Stripe Connect account on the incoming event instead.
    ```
 3. **Push entities and deploy functions**
    ```
-   base44 entities push
-   base44 functions deploy
+   ch
    ```
 4. **Set secrets** (Dashboard → your app → Secrets, or via CLI)
    ```
@@ -114,39 +113,22 @@ merchant from the Stripe Connect account on the incoming event instead.
 8. Log in as `MERCHANT_OWNER_EMAIL`, open **Settings** once to create your Merchant profile, then
    go to the dispute queue.
 
-## Demo script (~90 seconds)
+## Technical Stack & Architecture
 
-1. Open the **Dispute Queue** — empty state.
-2. Pick a reason code (e.g. "Product Not Received"), click **Simulate dispute**. Narrate: this is
-   exactly what happens when Stripe's real webhook fires — same function, same pipeline.
-3. Refresh the queue — the dispute appears with a live countdown badge, status already at
-   "Evidence Drafted."
-4. Open it. Show the **assembled evidence** panel (shipping carrier, tracking, receipt — pulled
-   automatically from the linked order) and any flagged gaps. Show the **AI strategy summary** and
-   drafted **evidence statement**, with a confidence score.
-5. Click **Approve & Submit** — show the activity timeline update live: ingested → evidence
-   assembled → draft generated → approved → submitted.
-6. Switch to **Dashboard** — win rate, $ recovered, reason-code breakdown, and any open pre-dispute
-   risk signals. This is the "what's next" answer: the same backend that fights disputes also flags
-   risky orders before they become one.
+ChargebackShield is a modern, decoupled web application composed of a powerful backend pipeline and a high-end interactive frontend.
 
-## Known gaps / things to verify against your Base44 account
+### Frontend (Vite + React + Framer Motion)
+- **Framework:** Built with React and bundled via Vite for rapid development and HMR.
+- **Routing:** Client-side routing managed by `react-router-dom`, featuring nested layouts for the dashboard application.
+- **UI/UX & Aesthetics:** The user interface leans heavily into modern design paradigms. It features a custom glassmorphism design system, leveraging `backdrop-filter` for translucent layers.
+- **Animations:** Page transitions, staggered list reveals, and hover micro-animations are entirely powered by `framer-motion`, creating a fluid, tactile experience.
+- **Icons:** Consistent, premium iconography provided by `lucide-react`.
 
-Built and grounded against Base44's published developer docs (entity schema format, RLS rules,
-function `entry.ts`/`Deno.serve` conventions, CLI commands, `InvokeLLM`/`SendEmail`/`UploadFile`, and
-`base44.functions.invoke`) — all verified against `docs.base44.com` while building this. Two things
-the public docs didn't show a worked example of, flagged here rather than silently assumed:
-
-- **Scheduled automations are configured in the Base44 dashboard UI** (Automations tab), not as a
-  file in this repo — the docs describe the feature but don't document a file-based schema for it, so
-  `deadlineSweep` needs to be wired to an hourly schedule by hand (step 6 above).
-- **`asServiceRole` writes with an explicit `created_by`** (used in `stripeWebhook` and
-  `deadlineSweep` so records land under `MERCHANT_OWNER_EMAIL` even with no logged-in user) — the
-  mechanism is documented to exist for service-level writes, but no worked example of overriding the
-  owner field was in the docs. If your account rejects the explicit `created_by`, the fallback is to
-  have those two functions call `buildEvidence`/`draftRebuttal`'s logic directly without setting
-  `created_by`, and instead grant the webhook's service role read/write access via a dashboard
-  permission rule scoped to the single owner.
+### Backend (Base44)
+- **Serverless Functions:** Orchestrates the core pipeline (ingest, assembly, LLM drafting, submission) via isolated, deployable Base44 functions.
+- **Database:** Fully managed Entity schemas (`Merchant`, `Dispute`, `Order`, `EvidencePacket`) backed by Base44's data layer.
+- **Security:** Strict Row-Level Security (RLS) ensures that all data is bound to the authenticated merchant.
+- **Integrations:** Direct API touchpoints with Stripe for webhooks and evidence submission, and native LLM integration (`InvokeLLM`) for automated defense generation.
 
 ## Extending beyond v1
 

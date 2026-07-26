@@ -7,7 +7,7 @@
 //   await base44.functions.invoke('scoreRisk', { order_id })
 
 import { createClientFromRequest } from "npm:@base44/sdk";
-import { logActivity } from "../_shared/dispute.ts";
+import { logActivity } from "../../shared/dispute.ts";
 
 const HIGH_VALUE_THRESHOLD = 200;
 const VELOCITY_WINDOW_HOURS = 24;

@@ -11,7 +11,7 @@
 
 import Stripe from "npm:stripe@^17";
 import { createClientFromRequest } from "npm:@base44/sdk";
-import { logActivity } from "../_shared/dispute.ts";
+import { logActivity } from "../../shared/dispute.ts";
 
 const stripe = new Stripe(Deno.env.get("STRIPE_SECRET_KEY") ?? "", { apiVersion: "2024-06-20" });
 

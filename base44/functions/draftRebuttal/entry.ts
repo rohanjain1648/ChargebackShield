@@ -6,7 +6,7 @@
 //   await base44.functions.invoke('draftRebuttal', { dispute_id })
 
 import { createClientFromRequest } from "npm:@base44/sdk";
-import { draftRebuttal, findEvidencePacket } from "../_shared/dispute.ts";
+import { draftRebuttal, findEvidencePacket } from "../../shared/dispute.ts";
 
 Deno.serve(async (req) => {
   const { dispute_id } = await req.json();

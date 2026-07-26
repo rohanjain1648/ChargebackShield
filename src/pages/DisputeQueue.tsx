@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { motion } from "framer-motion";
 import { base44 } from "@/api/base44Client";
 import { CountdownBadge, DisputeStatusBadge } from "@/components/Badges";
 import { formatMoney, reasonLabel } from "@/lib/format";
@@ -86,10 +87,10 @@ export function DisputeQueue() {
         </div>
       ) : (
         <>
-          <DisputeTable title="Open" rows={open} onOpen={(id) => navigate(`/disputes/${id}`)} />
+          <DisputeTable title="Open" rows={open} onOpen={(id) => navigate(`/app/disputes/${id}`)} />
           {closed.length > 0 && (
             <div style={{ marginTop: 24 }}>
-              <DisputeTable title="Closed" rows={closed} onOpen={(id) => navigate(`/disputes/${id}`)} />
+              <DisputeTable title="Closed" rows={closed} onOpen={(id) => navigate(`/app/disputes/${id}`)} />
             </div>
           )}
         </>
@@ -120,9 +121,27 @@ function DisputeTable({
             <th></th>
           </tr>
         </thead>
-        <tbody>
+        <motion.tbody
+          initial="hidden"
+          animate="visible"
+          variants={{
+            hidden: { opacity: 0 },
+            visible: {
+              opacity: 1,
+              transition: { staggerChildren: 0.05 },
+            },
+          }}
+        >
           {rows.map((d) => (
-            <tr className="row-link" key={d.id} onClick={() => onOpen(d.id)}>
+            <motion.tr
+              variants={{
+                hidden: { opacity: 0, y: 10 },
+                visible: { opacity: 1, y: 0, transition: { duration: 0.3 } },
+              }}
+              className="row-link"
+              key={d.id}
+              onClick={() => onOpen(d.id)}
+            >
               <td>{reasonLabel(d.reason)}</td>
               <td>{formatMoney(d.amount, d.currency)}</td>
               <td>
@@ -132,9 +151,9 @@ function DisputeTable({
                 <CountdownBadge dueIso={d.evidence_due_by} />
               </td>
               <td>{d.is_simulated && <span className="badge neutral">SIMULATED</span>}</td>
-            </tr>
+            </motion.tr>
           ))}
-        </tbody>
+        </motion.tbody>
       </table>
     </div>
   );

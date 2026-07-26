@@ -7,10 +7,10 @@
 // pointed at this function — e.g. every hour. No request body is required;
 // it has no authenticated caller (scheduled triggers run with no user
 // context), so it uses asServiceRole + MERCHANT_OWNER_EMAIL like the Stripe
-// webhook — see _shared/dispute.ts for why v1 is single-tenant.
+// webhook — see shared/dispute.ts for why v1 is single-tenant.
 
 import { createClientFromRequest } from "npm:@base44/sdk";
-import { logActivity, MERCHANT_OWNER_EMAIL } from "../_shared/dispute.ts";
+import { logActivity, MERCHANT_OWNER_EMAIL } from "../../shared/dispute.ts";
 
 // Hours-remaining thresholds that each trigger exactly one reminder email,
 // most urgent first. reminders_sent_count tracks how many of these have fired.

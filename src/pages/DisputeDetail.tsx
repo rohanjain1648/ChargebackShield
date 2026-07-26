@@ -63,7 +63,7 @@ export function DisputeDetail() {
     <div>
       <div className="page-header">
         <div>
-          <button className="btn secondary" onClick={() => navigate("/")} style={{ marginBottom: 10 }}>
+          <button className="btn secondary" onClick={() => navigate("/app")} style={{ marginBottom: 10 }}>
             ← Back to queue
           </button>
           <h1>

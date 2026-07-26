@@ -11,7 +11,7 @@
 //   await base44.functions.invoke('simulateDispute', { reason: 'product_not_received' })
 
 import { createClientFromRequest } from "npm:@base44/sdk";
-import { processNewDispute, REASON_STRATEGIES } from "../_shared/dispute.ts";
+import { processNewDispute, REASON_STRATEGIES } from "../../shared/dispute.ts";
 
 const REASONS = Object.keys(REASON_STRATEGIES);
 const DEMO_PRODUCTS = [

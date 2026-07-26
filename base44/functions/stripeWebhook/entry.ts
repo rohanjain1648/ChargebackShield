@@ -7,11 +7,11 @@
 // Secrets required (set via `base44 secrets set`):
 //   STRIPE_WEBHOOK_SECRET  - the endpoint's signing secret (whsec_...)
 //   MERCHANT_OWNER_EMAIL   - the merchant account's Base44 login email (see
-//                            _shared/dispute.ts for why v1 is single-tenant)
+//                            shared/dispute.ts for why v1 is single-tenant)
 
 import Stripe from "npm:stripe@^17";
 import { createClientFromRequest } from "npm:@base44/sdk";
-import { processNewDispute, logActivity, MERCHANT_OWNER_EMAIL } from "../_shared/dispute.ts";
+import { processNewDispute, logActivity, MERCHANT_OWNER_EMAIL } from "../../shared/dispute.ts";
 
 const stripe = new Stripe(Deno.env.get("STRIPE_SECRET_KEY") ?? "", { apiVersion: "2024-06-20" });
 const webhookSecret = Deno.env.get("STRIPE_WEBHOOK_SECRET") ?? "";

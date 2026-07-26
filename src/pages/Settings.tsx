@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { base44 } from "@/api/base44Client";
+import { motion } from "framer-motion";
 
 export function Settings() {
   const [merchant, setMerchant] = useState<any>(null);
@@ -45,16 +46,29 @@ export function Settings() {
 
   if (loading) return <p style={{ color: "var(--text-dim)" }}>Loading…</p>;
 
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: { staggerChildren: 0.1 },
+    },
+  };
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 15 },
+    visible: { opacity: 1, y: 0, transition: { duration: 0.4 } },
+  };
+
   return (
-    <div>
-      <div className="page-header">
+    <motion.div initial="hidden" animate="visible" variants={containerVariants}>
+      <motion.div variants={itemVariants} className="page-header">
         <div>
           <h1>Settings</h1>
           <p>Merchant profile, notification email, and automation policy.</p>
         </div>
-      </div>
+      </motion.div>
 
-      <div className="card" style={{ maxWidth: 480 }}>
+      <motion.div variants={itemVariants} className="card" style={{ maxWidth: 480 }}>
         <div className="field-row">
           <label>Business name</label>
           <input value={merchant.business_name ?? ""} onChange={(e) => update("business_name", e.target.value)} />
@@ -105,10 +119,10 @@ export function Settings() {
           <label style={{ margin: 0 }}>Require manual approval before submitting to Stripe</label>
         </div>
 
-        <button className="btn" onClick={save} disabled={saving}>
+        <button className="btn" onClick={save} disabled={saving} style={{ marginTop: 12 }}>
           {saving ? "Saving…" : saved ? "Saved ✓" : "Save changes"}
         </button>
-      </div>
-    </div>
+      </motion.div>
+    </motion.div>
   );
 }

@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { base44 } from "@/api/base44Client";
 import { formatMoney, reasonLabel } from "@/lib/format";
 import { RiskBadge } from "@/components/Badges";
+import { motion } from "framer-motion";
 
 export function Dashboard() {
   const [disputes, setDisputes] = useState<any[]>([]);
@@ -39,23 +40,36 @@ export function Dashboard() {
   }
   const maxCount = Math.max(1, ...Object.values(byReason).map((r) => r.count));
 
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: { staggerChildren: 0.1 },
+    },
+  };
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 15 },
+    visible: { opacity: 1, y: 0, transition: { duration: 0.4 } },
+  };
+
   return (
-    <div>
-      <div className="page-header">
+    <motion.div initial="hidden" animate="visible" variants={containerVariants}>
+      <motion.div variants={itemVariants} className="page-header">
         <div>
           <h1>Dashboard</h1>
           <p>Win rate, recovered revenue, and pre-dispute risk signals.</p>
         </div>
-      </div>
+      </motion.div>
 
-      <div className="grid stats">
+      <motion.div variants={itemVariants} className="grid stats">
         <StatCard label="Win rate" value={decided > 0 ? `${winRate}%` : "—"} />
         <StatCard label="Recovered" value={formatMoney(recovered)} />
         <StatCard label="At risk (pending)" value={formatMoney(atRisk)} />
         <StatCard label="Total disputes" value={String(disputes.length)} />
-      </div>
+      </motion.div>
 
-      <div className="two-col">
+      <motion.div variants={itemVariants} className="two-col">
         <div className="card">
           <p className="section-title">Disputes by reason code</p>
           {Object.entries(byReason).length === 0 ? (
@@ -103,8 +117,8 @@ export function Dashboard() {
             </div>
           )}
         </div>
-      </div>
-    </div>
+      </motion.div>
+    </motion.div>
   );
 }
 
